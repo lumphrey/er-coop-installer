@@ -3,6 +3,8 @@ import os
 import logging
 import shutil
 import sys
+import subprocess
+import win32com.client
 
 
 def parse_vdf_library_folders(vdf_path):
@@ -68,7 +70,33 @@ def install_mods(game_dir):
     logging.info("Installing mods to: %s", destination_dir)
     shutil.copytree(source_dir, destination_dir, dirs_exist_ok=True)
 
-    return None
+    return destination_dir
+
+
+def create_launcher_shortcut(mod_folder_dir):
+    # Path to the .bat file
+    bat_file_path = f"{mod_folder_dir}/launchmod_eldenring.bat"
+
+    # Path to the desktop
+    shortcut_folder = os.path.join(
+        os.environ["USERPROFILE"], "AppData", "Local", "Elden Ring - Seamless Coop")
+    os.makedirs(shortcut_folder, exist_ok=True)
+
+    # Shortcut name and target location
+    shortcut_path = os.path.join(
+        shortcut_folder, "ELDEN RING - Seamless Coop Launcher.lnk")
+
+    # Create the shortcut
+    shell = win32com.client.Dispatch("WScript.Shell")
+    shortcut = shell.CreateShortcut(shortcut_path)
+    shortcut.TargetPath = bat_file_path  # Path to the .bat file
+    shortcut.WorkingDirectory = os.path.dirname(
+        bat_file_path)  # Optional: Set working directory
+    shortcut.Save()
+
+    logging.info("Created desktop shortcut: %s", shortcut_path)
+
+    return shortcut_folder
 
 
 def main():
@@ -79,7 +107,9 @@ def main():
     er_path = find_game_path()
     logging.info('Elden Ring path: %s', er_path)
 
-    install_mods(er_path)
+    mod_folder_path = install_mods(er_path)
+    shortcut_path = create_launcher_shortcut(mod_folder_path)
+    subprocess.Popen(f'explorer "{shortcut_path}"')
 
 
 if __name__ == '__main__':

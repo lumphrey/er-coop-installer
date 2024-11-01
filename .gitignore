@@ -1,2 +1,4 @@
 .venv/
 src/modengine2/
+src/build/
+src/dist/
