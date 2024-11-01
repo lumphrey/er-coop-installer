@@ -66,7 +66,7 @@ def get_resource_path(relative_path):
 def install_mods(game_dir):
     source_dir = get_resource_path(r"modengine2")
 
-    destination_dir = f"{game_dir}/game/mods_dev"
+    destination_dir = f"{game_dir}/game/coop_mods"
     logging.info("Installing mods to: %s", destination_dir)
     shutil.copytree(source_dir, destination_dir, dirs_exist_ok=True)
 
