@@ -66,6 +66,8 @@ def get_resource_path(relative_path):
 def install_mods(game_dir):
     source_dir = get_resource_path(r"modengine2")
 
+    logging.debug(os.listdir(source_dir))
+
     destination_dir = f"{game_dir}/game/coop_mods"
     logging.info("Installing mods to: %s", destination_dir)
     shutil.copytree(source_dir, destination_dir, dirs_exist_ok=True)
@@ -77,7 +79,6 @@ def create_launcher_shortcut(mod_folder_dir):
     # Path to the .bat file
     bat_file_path = f"{mod_folder_dir}/launchmod_eldenring.bat"
 
-    # Path to the desktop
     shortcut_folder = os.path.join(
         os.environ["USERPROFILE"], "AppData", "Local", "Elden Ring - Seamless Coop")
     os.makedirs(shortcut_folder, exist_ok=True)
@@ -91,7 +92,7 @@ def create_launcher_shortcut(mod_folder_dir):
     shortcut = shell.CreateShortcut(shortcut_path)
     shortcut.TargetPath = bat_file_path  # Path to the .bat file
     shortcut.WorkingDirectory = os.path.dirname(
-        bat_file_path)  # Optional: Set working directory
+        bat_file_path)
     shortcut.Save()
 
     logging.info("Created desktop shortcut: %s", shortcut_path)

@@ -2,3 +2,6 @@
 src/modengine2/
 src/build/
 src/dist/
+modengine2/
+build/
+dist/
