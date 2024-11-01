@@ -1,6 +1,8 @@
 import re
 import os
 import logging
+import shutil
+import sys
 
 
 def parse_vdf_library_folders(vdf_path):
@@ -48,13 +50,36 @@ def find_game_path():
     return None
 
 
+def get_resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
+def install_mods(game_dir):
+    source_dir = get_resource_path(r"modengine2")
+
+    destination_dir = f"{game_dir}/game/mods_dev"
+    logging.info("Installing mods to: %s", destination_dir)
+    shutil.copytree(source_dir, destination_dir, dirs_exist_ok=True)
+
+    return None
+
+
 def main():
     log_level = logging.DEBUG
     logging.basicConfig(
         level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
 
     er_path = find_game_path()
-    logging.info('ER path: %s', er_path)
+    logging.info('Elden Ring path: %s', er_path)
+
+    install_mods(er_path)
 
 
 if __name__ == '__main__':
